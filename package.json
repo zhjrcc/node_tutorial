@@ -4,6 +4,7 @@
   "description": "learn node",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/zhjrcc/node_tutorial/issues"
   },
-  "homepage": "https://github.com/zhjrcc/node_tutorial#readme"
+  "homepage": "https://github.com/zhjrcc/node_tutorial#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
 }
