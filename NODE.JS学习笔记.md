@@ -1,7 +1,6 @@
 # NODE.JS学习笔记
 
 ## process.exit(number)和process.exitCode = number
-
 都可以结束当前的node程序，其中number是指定进程退出时的代码，表示程序执行的成功或失败。通常，0表示成功，非0表示错误或者异常。
 区别就在于，process.exit会立刻强制结束当前的程序，而process.exitCode会等待所有的待处理的任务完成后才自动退出。
 
@@ -34,4 +33,41 @@ fs.access('app.js', fs.constants.F_OK, (err) => {
     process.exit(0) // 0表示文件存在
   }
 })
+```
+process.exitCode应用场景：
+process.exit能用的地方，大部分process.exitCode也能用。
+CLI工具
+```js
+const args = process.argv.slice(2)
+
+switch(args[0]) {
+  case '--help':
+    console.log('输出帮助信息');
+    process.exitCode = 0;
+    break;
+  case '--version':
+    console.log('输出版本信息');
+    process.exitCode = 0;
+    break;
+  default:
+    console.error('命令不存在');
+    process.exitCode = 1;
+}
+```
+
+## NODE读取环境变量
+1.使用命令行传入参数:`A=1 B=2 C=3 node app`
+```js
+console.log(process.env.A, process.env.B, process.env.C) //1 2 3
+```
+2.使用`dotenv`包，读取.env文件中的环境变量:
+```js
+//.env文件
+A=1
+B=2
+C=3
+
+// app.js
+require('dotenv').config()
+console.log(process.env.A, process.env.B, process.env.C) //1 2 3
 ```

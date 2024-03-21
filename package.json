@@ -22,5 +22,8 @@
   "homepage": "https://github.com/zhjrcc/node_tutorial#readme",
   "devDependencies": {
     "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   }
 }
