@@ -24,6 +24,10 @@
     "nodemon": "^3.1.0"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "chalk": "^4.1.2",
+    "dotenv": "^16.4.5",
+    "minimist": "^1.2.8",
+    "progress": "^2.0.3",
+    "prompt-sync": "^4.2.0"
   }
 }
