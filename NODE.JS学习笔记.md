@@ -184,3 +184,228 @@ const rl = readline.createInterface({
 const age = prompt('How old are you？');
 console.log(age, '岁')
 ```
+
+## NPM
+
+### NPM命令：
+npm init
+npm install
+npm install <package_name>[-g --save-dev, --no-save,--save-optional, --no-optional]
+npm install <package_name>@version
+npm update
+npm update <package_name>
+npm run <task-name>
+npm list
+npm view <package_name> version
+npm uninstall <package_name>
+npm help
+npx
+
+### npx
+当下载的包中含有可执行文件，它的位置在node_modules/.bin目录下，可以使用npx命令执行它。`npx nodemon app`
+`npx cowsay I am learning NODE.JS`
+
+```js
+const cowsay = require('cowsay')
+const chalk = require('chalk')
+console.log(
+  chalk.red(
+    cowsay.say({
+      e: '$$',
+      T: 'U',
+      text: 'I am learning NODE.JS'
+    })
+  )
+);
+```
+### package.json和package-lock.json
+
+package.json 和 package-lock.json 都是 Node.js 项目中用来管理依赖关系的文件，它们之间有以下区别：
+1. **package.json**:
+   - package.json 是用来描述项目的元数据和配置信息的文件，包含了项目的名称、版本、作者、许可证、依赖项等信息。
+   - 在 package.json 中，可以手动添加和更新项目所需的各种依赖包，并且可以定义需要的版本范围。
+   - 通过运行 `npm install` 命令，npm 会根据 package.json 安装项目所需的依赖包。
+
+2. **package-lock.json**:
+   - package-lock.json 是 npm 在安装依赖包时自动生成的文件，用于锁定依赖包的确切版本。
+   - package-lock.json 文件会记录每个依赖包的确切版本号，以确保每个构建环境中安装的依赖包版本一致。
+   - 这样可以避免由于依赖包的更新而导致的不兼容性或版本冲突问题。
+
+综上所述，package.json 主要用于描述项目信息和依赖包的范围，而 package-lock.json 则是详细记录项目依赖包的确切版本，帮助确保跨不同环境的一致性。在实际项目开发中，两者通常一起使用以确保稳定的依赖管理。
+
+### ^和~
+语义化版本控制：主要版本.次要版本.补丁版本
+^允许更新到次要版本和补丁版本；
+~只允许更新到补丁版本；
+
+### NODE导出和导入
+三种导出方式
+```js
+// const honda = {
+//   branch: "本田",
+//   model: "雅阁",
+// };
+
+// const toyota = {
+//   branch: '丰田',
+//   module: '凯美瑞'
+// }
+// 1.使用module.exports= 对象，导出
+// module.exports = honda;
+// 使用这种方式会覆盖前一个导出对象
+// module.exports = toyota;
+
+// 2.使用exports.要导出的对象名 = 对象，导出
+// exports.car = honda
+//使用这种方式时，可以在导入时使用解构赋值的方式{car} = require('module-car')
+// exports.car = {honda, toyota}
+
+//3.使用exports.要导出的对象 = 值，导出
+//使用这种方式时，可以在导入时使用解构赋值的方式{honda, toyota} = require('module-car')
+exports.honda = {
+  branch: "本田",
+  model: "雅阁",
+};
+exports.toyota = {
+  branch: "丰田",
+  model: "凯美瑞",
+};
+```
+
+## NODE.JS错误处理
+```js
+//1.使用Error,throw
+// const error = new Error('这是一个标准的错误对象')
+// throw error;
+
+//2. 使用自定义错误对象
+// const CustomeError = require('./customError');
+
+// const error = new CustomeError('这是一个自定义的错误对象')
+// throw error
+
+const doSomething = () => {
+  console.log("这是doSomething函数");
+  // fetch1未定义
+  // fetch1("localhost:300/api");
+  let data = "这是doSomething函数";
+  return data;
+};
+// 使用try...catch
+// try {
+//   doSomething();
+// } catch (err) {
+//   throw err;
+// }
+// 4.使用process.on('uncaughtException')监听所有未捕获的错误
+// doSomething()
+// process.on('uncaughtException',(err) => {
+//   throw err;
+//   process.exit(1)
+// })
+
+// 5.使用promise的catch
+// const promise = new Promise((resolve, reject) => {
+//   if (false) {
+//     resolve(doSomething());
+//   } else {
+//     reject(doSomething());
+//   }
+// });
+
+// promise.then((val) => {
+//   console.log(val)
+// }).catch((err)=>{
+//   console.log(err)
+// })
+
+// async/await的异常处理，搭配try...catch
+
+const someFunction = async () => {
+  try {
+    await doSomething();
+  } catch(err) {
+    console.log(err)
+  }
+};
+someFunction()
+```
+
+## async/await和promise
+
+两者都是为了异步编程而设计出来的。
+```js
+// promise
+const shopOpen = true;
+
+const order = (time, work) => {
+  return new Promise((resolve, reject) => {
+    if (shopOpen) {
+      setTimeout(() => {
+        resolve(work());
+      }, time);
+    } else {
+      reject(console.log("店铺关门了"));
+    }
+  });
+};
+order(2000, () => {
+  console.log("客人点了一杯草莓酸奶");
+})
+  .then(() => {
+    return order(1000, () => {
+      console.log("店员们开始做草莓酸奶");
+    });
+  })
+  .then(() => {
+    return order(2000, () => {
+      console.log("草莓已经被捣碎");
+    });
+  })
+  .then(() => {
+    return order(2000, () => {
+      console.log("草莓酸奶做好了！");
+    });
+  })
+  .catch((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("订单自动取消了");
+    }
+  })
+  .finally(() => {
+    console.log("结束营业，店铺到时间关门了");
+  });
+
+```
+```js
+// async/await
+const shopOpen = true;
+
+const step = (time, work) => {
+  return new Promise((resolve, reject) => {
+    if (shopOpen) {
+      setTimeout(() => resolve(work), time);
+    } else {
+      reject("店铺关门了");
+    }
+  });
+};
+
+async function order() {
+  try {
+    console.log(await step(2000, "下单草莓酸奶"));
+    console.log(await step(1000, "开始做草莓酸奶"));
+    console.log(await step(2000, "草莓酸奶做好了"));
+    console.log("test");
+  } catch (error) {
+    console.log(error);
+  } finally {
+    console.log("结束营业");
+  }
+}
+
+order();
+
+```
