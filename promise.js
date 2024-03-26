@@ -14,6 +14,7 @@ const order = (time, work) => {
 order(2000, () => {
   console.log("客人点了一杯草莓酸奶");
 })
+// 这里必须return一个promise，下一个then才会按照顺序执行
   .then(() => {
     return order(1000, () => {
       console.log("店员们开始做草莓酸奶");
