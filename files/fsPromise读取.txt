@@ -1,1 +1,0 @@
-这是fs基于promise的方式读取的的txt文件
