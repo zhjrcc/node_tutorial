@@ -437,5 +437,9 @@ const newPath = path.join(path.dirname(sampleTxt), testFile)
 console.log('path.join():',newPath)
 
 ```
-fs读取和写入都各有三种方式：同步，异步，promise
+fs读取和写入都各有三种方式：同步，异步，promise.
+
+
+
+
 
