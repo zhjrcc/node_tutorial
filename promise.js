@@ -3,6 +3,7 @@ const shopOpen = true;
 const order = (time, work) => {
   return new Promise((resolve, reject) => {
     if (shopOpen) {
+      // 为了让settimeout按顺序执行，必须设定时间间隔才resolve掉promise
       setTimeout(() => {
         resolve(work());
       }, time);

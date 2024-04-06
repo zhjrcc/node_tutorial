@@ -439,6 +439,16 @@ console.log('path.join():',newPath)
 ```
 fs读取和写入都各有三种方式：同步，异步，promise.
 
+## 异步，callback，promise，async/await
+
+三种异步编程的方式。
+
+## REST API设计
+
+GET,POST,DELETE,PUT.
+
+
+
 
 
 
