@@ -19,7 +19,15 @@ app.get("/", (req, res) => {
 })
 
 app.get("/api/users", (req, res) => {
-  res.status(200).send(mockUser)
+  // console.log(req.query)
+  const {
+    query: { filter, value },
+  } = req
+  if (!filter || !value) {
+    return res.status(200).send(mockUser)
+  }
+  const filterUser = mockUser.filter((user) => user[filter].includes(value))
+  return res.status(200).send(filterUser)
 })
 
 app.get("/api/products", (req, res) => {
@@ -27,10 +35,11 @@ app.get("/api/products", (req, res) => {
 })
 
 app.get("/api/users/:id", (req, res) => {
+  // console.log(req.params)
   const parsedId = parseInt(req.params.id)
-  if(isNaN(parsedId)) res.sendStatus(400)
+  if (isNaN(parsedId)) res.sendStatus(400)
   const findUser = mockUser.find((user) => user.id === parsedId)
-  if(!findUser) res.sendStatus(404)
+  if (!findUser) res.sendStatus(404)
   res.send(findUser)
 })
 
