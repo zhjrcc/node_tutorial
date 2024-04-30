@@ -1,10 +1,28 @@
-import express from "express"
+import express, { request } from "express"
 import dotenv from "dotenv"
 dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3001
 
+const loggingMiddleware = (req, res, next) => {
+  console.log(`${req.method} - ${req.url}`)
+  next()
+}
+// 自定义中间件
+const resolveIndexByUserId = (req, res, next) => {
+  const {
+    params: { id },
+  } = req
+  const parsedId = parseInt(id)
+  if (isNaN(parsedId)) return res.sendStatus(400)
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId)
+  if (findUserIndex === -1) return res.sendStatus(404)
+  req.findUserIndex = findUserIndex
+  next()
+}
+// 中间件在程序中的位置很重要，中间件位置后面的路由都将会先经过中间件，而中间件之前的则不会经过中间件
+// app.use(loggingMiddleware)
 app.use(express.json())
 
 const mockUsers = [
@@ -27,7 +45,7 @@ app.post("/api/users", (req, res) => {
   res.status(201).send(newUser)
 })
 
-app.get("/api/users", (req, res) => {
+app.get("/api/users", loggingMiddleware, (req, res) => {
   // console.log(req.query)
   const {
     query: { filter, value },
@@ -43,47 +61,27 @@ app.get("/api/products", (req, res) => {
   res.status(200).send([{ id: 1, name: "广州白切鸡", price: "99元" }])
 })
 
-app.get("/api/users/:id", (req, res) => {
+app.get("/api/users/:id", resolveIndexByUserId, (req, res) => {
   // console.log(req.params)
-  const parsedId = parseInt(req.params.id)
-  if (isNaN(parsedId)) res.sendStatus(400)
-  const findUser = mockUsers.find((user) => user.id === parsedId)
-  if (!findUser) res.sendStatus(404)
-  res.send(findUser)
+  const {findUserIndex} = req;
+  const findUser = mockUsers[findUserIndex]
+  res.status(200).send(findUser)
 })
 
-app.put("/api/users/:id", (req, res) => {
-  const {
-    body,
-    params: { id },
-  } = req
-  const parsedId = parseInt(id)
-  if (isNaN(parsedId)) return res.sendStatus(400)
-  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId)
-  if (findUserIndex === -1) return res.sendStatus(404)
-  mockUsers[findUserIndex] = { id: parsedId, ...body }
+app.put("/api/users/:id", resolveIndexByUserId, (req, res) => {
+  const { body, findUserIndex } = req
+  mockUsers[findUserIndex] = { id: mockUsers[findUserIndex].id, ...body }
   return res.sendStatus(200)
 })
 
-app.patch("/api/users/:id", (req, res) => {
-  const {
-    body,
-    params: { id },
-  } = req
-  const parsedId = parseInt(id)
-  if (isNaN(parsedId)) return res.sendStatus(400)
-  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId)
-  if (findUserIndex === -1) return res.sendStatus(404)
+app.patch("/api/users/:id", resolveIndexByUserId, (req, res) => {
+  const { body, findUserIndex } = req
   mockUsers[findUserIndex] = { ...mockUsers[findUserIndex], ...body }
   return res.sendStatus(200)
 })
 
-app.delete('/api/users/:id', (req, res)=>{
-  const {params:{id}} = req
-  const parsedId = parseInt(id)
-  if(isNaN(parsedId)) return res.sendStatus(400)
-  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId)
-  if(findUserIndex === -1) return res.sendStatus(404)
+app.delete("/api/users/:id", resolveIndexByUserId, (req, res) => {
+  const {findUserIndex} = req
   mockUsers.splice(findUserIndex, 1)
   res.status(200).send(mockUsers)
 })
