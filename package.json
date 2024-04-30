@@ -28,6 +28,7 @@
     "cowsay": "^1.6.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-validator": "^7.0.1",
     "minimist": "^1.2.8",
     "progress": "^2.0.3",
     "prompt-sync": "^4.2.0"
