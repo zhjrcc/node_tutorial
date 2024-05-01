@@ -1,7 +1,16 @@
 import express, { request } from "express"
 import { config } from "dotenv"
-import { query, validationResult, body, matchedData } from "express-validator"
-
+import {
+  query,
+  validationResult,
+  body,
+  matchedData,
+  checkSchema,
+} from "express-validator"
+import {
+  userPostValidationSchema,
+  userQueryValidationSchema,
+} from "./utils/validationSchemas.mjs"
 config()
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -26,91 +35,78 @@ const resolveIndexByUserId = (req, res, next) => {
 // app.use(loggingMiddleware)
 app.use(express.json())
 
+//模拟的用户数据
 const mockUsers = [
   { id: 1, username: "zhjrcc", email: "zjrhello@gmail.com" },
   { id: 2, username: "jack", email: "jack@outlook.com" },
   { id: 3, username: "lily", email: "lily@qq.com" },
 ]
 
+// @desc GET /
 app.get("/", loggingMiddleware, (req, res) => {
   res.status(200).send({
     msg: "Hello Express",
   })
 })
 
-app.post(
-  "/api/users",
-  [
-    body("username")
-      .notEmpty()
-      .withMessage("不能为空")
-      .isLength({ min: 10, max: 100 })
-      .withMessage("用户名长度在5-10个字符"),
-    body("email").notEmpty().withMessage("邮箱不能为空"),
-  ],
-  (req, res) => {
-    const valiadtedResult = validationResult(req)
-    console.log(valiadtedResult)
+// @desc GET /api/users?query
+app.get("/api/users", checkSchema(userQueryValidationSchema), (req, res) => {
+  console.log(req.query)
+  const {
+    query: { value },
+  } = req
 
-    if (!valiadtedResult.isEmpty())
-      return res.status(400).send({ error: valiadtedResult.array() })
-    const { body } = req
-    const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...body }
-    mockUsers.push(newUser)
-    res.status(201).send(newUser)
-  }
-)
-
-app.get(
-  "/api/users",
-  query("filter")
-    .isString()
-    .withMessage("必须是字符串")
-    .notEmpty()
-    .withMessage("不能为空")
-    .isLength({ min: 5, max: 10 })
-    .withMessage("字符串长度范围在5-10个字符之间"),
-  (req, res) => {
-    // console.log(req.query)
-    const {
-      query: { value },
-    } = req
-
-    const valiadtedResult = validationResult(req)
-    console.log(valiadtedResult)
-    if (!valiadtedResult.isEmpty()) return res.status(400).send(mockUsers)
-    const data = matchedData(req)
-    const { filter } = data
-    const filterUser = mockUsers.filter((user) => {
-      if (user[filter]) return user[filter].includes(value)
-    })
-    return res.status(200).send(filterUser)
-  }
-)
-
-app.get("/api/products", (req, res) => {
-  res.status(200).send([{ id: 1, name: "广州白切鸡", price: "99元" }])
+  const valiadtedResult = validationResult(req)
+  console.log(valiadtedResult)
+  if (!valiadtedResult.isEmpty()) return res.status(400).send(mockUsers)
+  const data = matchedData(req)
+  const { filter } = data
+  const filterUser = mockUsers.filter((user) => {
+    if (user[filter]) return user[filter].includes(value)
+  })
+  return res.status(200).send(filterUser)
 })
 
+// @desc POST /api/uers
+app.post("/api/users", checkSchema(userPostValidationSchema), (req, res) => {
+  const valiadtedResult = validationResult(req)
+  console.log(valiadtedResult)
+
+  if (!valiadtedResult.isEmpty()) return res.sendStatus(400)
+  const { body } = req
+  const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...body }
+  mockUsers.push(newUser)
+  res.status(201).send(newUser)
+})
+
+// @desc GET /api/products
+app.get("/api/products", (req, res) => {
+  res.status(200).send([{ id: 1, name: "Snicker", price: "99元" }])
+})
+
+// @desc GET /api/users/:id
 app.get("/api/users/:id", resolveIndexByUserId, (req, res) => {
-  // console.log(req.params)
+  console.log(req.params)
   const { findUserIndex } = req
   const findUser = mockUsers[findUserIndex]
   res.status(200).send(findUser)
 })
 
+// @desc PUT /api/users/:id
 app.put("/api/users/:id", resolveIndexByUserId, (req, res) => {
   const { body, findUserIndex } = req
   mockUsers[findUserIndex] = { id: mockUsers[findUserIndex].id, ...body }
   return res.sendStatus(200)
 })
 
+// @desc PATCH /api/user/:id
 app.patch("/api/users/:id", resolveIndexByUserId, (req, res) => {
   const { body, findUserIndex } = req
   mockUsers[findUserIndex] = { ...mockUsers[findUserIndex], ...body }
   return res.sendStatus(200)
 })
 
+// @desc DELETE /api/user/:id
 app.delete("/api/users/:id", resolveIndexByUserId, (req, res) => {
   const { findUserIndex } = req
   mockUsers.splice(findUserIndex, 1)
