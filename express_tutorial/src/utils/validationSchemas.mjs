@@ -2,10 +2,10 @@ const userPostValidationSchema  = {
   username: {
     isLength: {
       options: {
-        min: 5,
+        min: 2,
         max: 10,
       },
-      errorMessage: "用户名长度应在5~8个字符之间"
+      errorMessage: "用户名长度应在2~10个字符之间"
     }
   },
   email: {
