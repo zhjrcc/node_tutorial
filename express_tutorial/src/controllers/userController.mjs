@@ -5,7 +5,6 @@ import mockUsers from "../utils/constants.mjs"
 // @route /api/users
 // access public
 const getAllUsers = (req, res) => {
-  res.cookie('region', 'JP', { maxAge: 60000 * 60})
   const {
     query: { value },
   } = req
