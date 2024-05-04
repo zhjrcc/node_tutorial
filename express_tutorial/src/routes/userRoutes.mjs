@@ -14,6 +14,7 @@ import {
   updateUser,
   patchUser,
 } from "../controllers/userController.mjs"
+
 router
   .get("/", checkSchema(userQueryValidationSchema), getAllUsers)
   .post("/", checkSchema(userPostValidationSchema), addUser)

@@ -8,6 +8,13 @@ const getAllUsers = (req, res) => {
   const {
     query: { value },
   } = req
+  console.log(req.session.id)
+  req.sessionStore.get(req.session.id, (err, sessionData) => {
+    if (err) {
+      throw err;
+    }
+    console.log(sessionData)
+  })
   const valiadtedResult = validationResult(req)
   if (!valiadtedResult.isEmpty()) return res.status(200).send(mockUsers)
   const data = matchedData(req)

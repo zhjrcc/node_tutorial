@@ -2,9 +2,9 @@
   "name": "express_tutorial",
   "version": "1.0.0",
   "description": "",
-  "main": "index.mjs",
+  "main": "app.mjs",
   "scripts": {
-    "start": "nodemon ./src/index.mjs",
+    "start": "nodemon ./src/app.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "cookie-parser": "^1.4.6"
+    "cookie-parser": "^1.4.6",
+    "express-session": "^1.18.0"
   }
 }
