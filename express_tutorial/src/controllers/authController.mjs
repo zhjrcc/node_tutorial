@@ -1,28 +1,19 @@
 import mockUsers from "../utils/constants.mjs"
 
 const login = (req, res) => {
-  const {
-    body: { username, password },
-  } = req
-  const findUser = mockUsers.find((user) => user.username === username)
-  if (!findUser || findUser.password !== password) return res.sendStatus(401)
-  // 将user保存到session中
-  req.session.user = findUser
-  return res.status(200).send(findUser)
+  // req.session.visited = true;
+  return res.status(200).send(req.user)
 }
 
 const getStatus = (req, res) => {
-  // req.session.id === req.sessionID
-  req.sessionStore.get(req.session.id, (err, sessionData) => {
-    if(err) throw err
-    console.log(sessionData)
+  return req.user ? res.send(req.user) : res.sendStatus(401)
+}
+const logout = (req, res) => {
+  if (!req.user) return res.sendStatus(401)
+  req.logout((err) => {
+    if (err) return res.sendStatus(400)
+    return res.sendStatus(200)
   })
-  return req.session.user
-    ? res.status(200).json({
-        msg: "已登录",
-        user: req.session.user,
-      })
-    : res.sendStatus(401)
 }
 
-export { login, getStatus }
+export { login, getStatus, logout }

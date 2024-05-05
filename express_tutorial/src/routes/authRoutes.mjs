@@ -1,7 +1,12 @@
 import { Router } from "express"
-import { login, getStatus } from "../controllers/authController.mjs"
+import { login, getStatus, logout } from "../controllers/authController.mjs"
+import "../strategies/local-strategy.mjs"
+import passport from "passport"
 const router = Router()
 
-router.post("/", login).get("/status", getStatus)
+router
+  .post("/", passport.authenticate("local"), login)
+  .post("/logout", logout)
+  .get("/status", getStatus)
 
 export default router
