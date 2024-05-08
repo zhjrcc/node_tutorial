@@ -1,7 +1,6 @@
 import mockUsers from "../utils/constants.mjs"
 
 const login = (req, res) => {
-  // req.session.visited = true;
   return res.status(200).send(req.user)
 }
 

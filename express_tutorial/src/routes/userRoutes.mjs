@@ -17,7 +17,7 @@ import {
 
 router
   .get("/", checkSchema(userQueryValidationSchema), getAllUsers)
-  .post("/", checkSchema(userPostValidationSchema), addUser)
+  .post("/",checkSchema(userPostValidationSchema), addUser)
 
 // 使用中间件在程序中的位置很重要，中间件位置后面的路由都将会先经过中间件，而中间件之前的则不会经过中间件
 router

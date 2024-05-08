@@ -1,5 +1,6 @@
 import { validationResult, matchedData } from "express-validator"
 import mockUsers from "../utils/constants.mjs"
+import { User } from "../mongoose/schema/user.mjs"
 
 // @desc get all user
 // @route /api/users
@@ -11,7 +12,7 @@ const getAllUsers = (req, res) => {
   console.log(req.session.id)
   req.sessionStore.get(req.session.id, (err, sessionData) => {
     if (err) {
-      throw err;
+      throw err
     }
     console.log(sessionData)
   })
@@ -25,14 +26,19 @@ const getAllUsers = (req, res) => {
   return res.status(200).send(filterUser)
 }
 
-const addUser = (req, res) => {
-  const valiadtedResult = validationResult(req)
-  console.log(valiadtedResult)
-  if (!valiadtedResult.isEmpty()) return res.sendStatus(400)
-  const { body } = req
-  const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...body }
-  mockUsers.push(newUser)
-  res.status(201).send(newUser)
+const addUser = async (req, res) => {
+  const result = validationResult(req)
+  if (!result.isEmpty()) return res.send(result.array())
+  const data = matchedData(req)
+  console.log(data)
+  const newUser = new User(data)
+  try {
+    const savedUser = await newUser.save(newUser)
+    return res.status(201).send(savedUser)
+  } catch (err) {
+    console.log(err)
+    return res.sendStatus(400)
+  }
 }
 
 const getUser = (req, res) => {
