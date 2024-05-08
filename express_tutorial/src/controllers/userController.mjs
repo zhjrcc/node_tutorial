@@ -1,6 +1,7 @@
 import { validationResult, matchedData } from "express-validator"
 import mockUsers from "../utils/constants.mjs"
 import { User } from "../mongoose/schema/user.mjs"
+import { hashPassword } from "../utils/helper.mjs"
 
 // @desc get all user
 // @route /api/users
@@ -30,7 +31,7 @@ const addUser = async (req, res) => {
   const result = validationResult(req)
   if (!result.isEmpty()) return res.send(result.array())
   const data = matchedData(req)
-  console.log(data)
+  data.password = await hashPassword(data.password)
   const newUser = new User(data)
   try {
     const savedUser = await newUser.save(newUser)
