@@ -7,6 +7,7 @@ const login = (req, res) => {
 const getStatus = (req, res) => {
   return req.user ? res.send(req.user) : res.sendStatus(401)
 }
+
 const logout = (req, res) => {
   if (!req.user) return res.sendStatus(401)
   req.logout((err) => {

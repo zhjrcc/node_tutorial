@@ -1,27 +1,33 @@
 import passport from "passport"
 import { Strategy } from "passport-local"
-import mockUsers from "../utils/constants.mjs"
+import { User } from "../mongoose/schema/user.mjs"
 
 passport.serializeUser((user, done) => {
-  console.log(user)
   done(null, user.id)
 })
 
-passport.deserializeUser((id, done) => {
-  console.log("id" + id)
-  const findUser = mockUsers.find((user) => user.id === id)
-  done(null, findUser)
+passport.deserializeUser(async (id, done) => {
+  try {
+    const findUser = await User.findById(id)
+    if (!findUser) throw new Error("User not found")
+    done(null, findUser)
+  } catch (err) {
+    done(err, null)
+  }
 })
 
 export default passport.use(
-  new Strategy({ usernameField: "username" }, (username, password, done) => {
-    try {
-      const findUser = mockUsers.find((user) => user.username === username)
-      if (!findUser || findUser.password !== password)
-        throw new Error("Unauthorized")
-      done(null, findUser)
-    } catch (err) {
-      done(err, null)
+  new Strategy(
+    { usernameField: "username" },
+    async (username, password, done) => {
+      try {
+        const findUser = await User.findOne({ username })
+        if (!findUser || findUser.password !== password)
+          throw new Error("Unauthorized")
+        done(null, findUser)
+      } catch (err) {
+        done(err, null)
+      }
     }
-  })
+  )
 )

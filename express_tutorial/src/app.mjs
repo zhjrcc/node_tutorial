@@ -12,9 +12,16 @@ config()
 const app = express()
 const PORT = process.env.PORT || 3001
 
-mongoose.connect("mongodb://root:113647@localhost:27017/express_tutorial?authSource=admin")
-  .then(() => {console.log("Connect to MongoDB")})
-  .catch((err) => {console.log(`Error: ${err}`)})
+mongoose
+  .connect(
+    "mongodb://root:113647@localhost:27017/express_tutorial?authSource=admin"
+  )
+  .then(() => {
+    console.log("Connect to MongoDB")
+  })
+  .catch((err) => {
+    console.log(`Error: ${err}`)
+  })
 
 app.use(
   session({
