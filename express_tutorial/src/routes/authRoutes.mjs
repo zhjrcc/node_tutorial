@@ -1,6 +1,5 @@
 import { Router } from "express"
 import { login, getStatus, logout } from "../controllers/authController.mjs"
-import "../strategies/local-strategy.mjs"
 import passport from "passport"
 const router = Router()
 

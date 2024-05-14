@@ -1,5 +1,3 @@
-import mockUsers from "../utils/constants.mjs"
-
 const login = (req, res) => {
   return res.status(200).send(req.user)
 }
